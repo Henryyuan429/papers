@@ -1,0 +1,1360 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="SurroundNEXO: Ego-Centric Metric Bridging for Spatially Consistent Geometry in Autonomous Driving">
+  <title>SurroundNEXO</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <style>
+    :root {
+      --paper: #f4f6f9;
+      --hero: #d7dce7;
+      --ink: #1d1d1e;
+      --muted: #555d68;
+      --line: #d9dee8;
+      --line-soft: #e6ebf3;
+      --line-strong: #b8c1cf;
+      --blue: #5a5afa;
+      --card: #ffffff;
+      --shadow-card: 0 18px 48px rgba(23, 31, 44, 0.08);
+      --shadow-soft: 0 10px 28px rgba(23, 31, 44, 0.06);
+      --shadow-float: 0 16px 34px rgba(23, 31, 44, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .container {
+      width: min(960px, calc(100vw - 40px));
+      margin: 0 auto;
+    }
+
+    .container-wide {
+      width: min(1000px, calc(100vw - 40px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      background: var(--hero);
+      position: relative;
+      text-align: center;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: flex-end;
+      gap: 30px;
+      width: min(1280px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 22px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .top-nav a:hover {
+      color: var(--ink);
+    }
+
+    .title-wrap {
+      padding: 44px 0 64px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(54px, 9vw, 104px);
+      line-height: 0.9;
+      letter-spacing: -0.08em;
+    }
+
+    .subtitle {
+      max-width: 980px;
+      margin: 22px auto 0;
+      font-size: clamp(18px, 2.15vw, 21px);
+      line-height: 1.45;
+    }
+
+    .subtitle-line {
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .conference {
+      display: block;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .authors,
+    .institution {
+      margin-top: 16px;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .authors {
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      font-weight: 700;
+    }
+
+    .author-block {
+      display: inline-block;
+      margin: 0 8px;
+      white-space: nowrap;
+    }
+
+    .institution {
+      margin-top: 10px;
+    }
+
+    .institution span {
+      display: inline-block;
+      margin: 0 12px;
+      white-space: nowrap;
+    }
+
+    sup {
+      font-size: 0.72em;
+      line-height: 0;
+    }
+
+    .authors a {
+      color: var(--blue);
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 38px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 48px;
+      padding: 0 28px;
+      border-radius: 999px;
+      background: #000;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 800;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .pill.secondary {
+      background: #303030;
+    }
+
+    section {
+      padding: 78px 0;
+    }
+
+    section:nth-of-type(even) {
+      background: #fff;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      text-align: center;
+      font-size: 34px;
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+
+    .lead,
+    .text {
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .lead {
+      max-width: 780px;
+    }
+
+    .figure-card,
+    .card,
+    .table-card,
+    .viewer-card {
+      position: relative;
+      border: 1px solid var(--line-soft);
+      border-radius: 24px;
+      background: var(--card);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    .figure-card {
+      margin-top: 28px;
+      padding: 12px;
+    }
+
+    .figure-card img {
+      width: 100%;
+      border-radius: 16px;
+    }
+
+    .caption {
+      margin: 12px 8px 4px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .teaser-caption {
+      font-size: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 28px;
+    }
+
+    .card {
+      padding: 24px;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 28px;
+    }
+
+    .metric {
+      padding: 30px 24px;
+      border: 1px solid var(--line-soft);
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: var(--shadow-soft);
+      text-align: center;
+    }
+
+    .metric strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 38px;
+      letter-spacing: -0.05em;
+    }
+
+    .metric .arrow {
+      margin-left: 4px;
+      font-size: 0.72em;
+      vertical-align: 0.08em;
+    }
+
+    .metric.metric-red strong {
+      color: #B5121B;
+    }
+
+    .metric.metric-teal strong {
+      color: #007C7A;
+    }
+
+    .metric.metric-purple strong {
+      color: #6B4E9B;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .table-pager {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin: 28px 0 16px;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .tab {
+      border: 1px solid var(--line-soft);
+      border-radius: 999px;
+      padding: 9px 13px;
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(23, 31, 44, 0.04);
+      transition: border-color 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .tab:hover {
+      border-color: var(--line-strong);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .tab[aria-selected="true"] {
+      background: #000;
+      color: #fff;
+      border-color: #000;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .table-page {
+      display: none;
+    }
+
+    .table-page.active {
+      display: block;
+    }
+
+    .table-card {
+      padding: 8px;
+    }
+
+    .table-shell {
+      position: relative;
+    }
+
+    .table-arrow-button {
+      position: absolute;
+      top: 210px;
+      z-index: 2;
+      display: grid;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      border: 1px solid var(--line-soft);
+      border-radius: 50%;
+      background: #fff;
+      color: var(--ink);
+      box-shadow: var(--shadow-float);
+      cursor: pointer;
+      font: inherit;
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .table-arrow-button.prev {
+      left: -24px;
+    }
+
+    .table-arrow-button.next {
+      right: -24px;
+    }
+
+    .table-arrow-button:hover {
+      border-color: #000;
+      background: #000;
+      color: #fff;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1040px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line-soft);
+      font-size: 14px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #f4f6f9;
+      font-weight: 800;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .ours-row td {
+      font-weight: 800;
+    }
+
+    .highlight td {
+      background: #eef1ff;
+      color: #111;
+      font-weight: 800;
+    }
+
+    .rank-first {
+      background: rgb(250, 225, 235);
+      color: #111;
+      font-weight: 800;
+    }
+
+    .rank-second {
+      background: rgb(230, 220, 250);
+      color: #111;
+    }
+
+    .rank-third {
+      background: rgb(210, 230, 250);
+      color: #111;
+    }
+
+    .group-row td {
+      background: #f4f6f9;
+      color: var(--muted);
+      font-style: italic;
+      font-weight: 800;
+      text-align: left;
+    }
+
+    .model-switcher {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 28px 0 16px;
+    }
+
+    .model-button {
+      border: 1px solid var(--line-soft);
+      border-radius: 999px;
+      padding: 14px 26px;
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      font-size: 17px;
+      font-weight: 800;
+      box-shadow: 0 6px 18px rgba(23, 31, 44, 0.05);
+      transition: border-color 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .model-button[aria-selected="true"],
+    .model-button:hover {
+      border-color: #000;
+      background: #000;
+      color: #fff;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .viewer-shell {
+      position: relative;
+    }
+
+    .viewer-card {
+      border: 1px solid var(--line-soft);
+      border-radius: 24px;
+      background: var(--card);
+      overflow: hidden;
+    }
+
+    .scene-arrow-button {
+      position: absolute;
+      top: 50%;
+      z-index: 2;
+      display: grid;
+      width: 56px;
+      height: 56px;
+      place-items: center;
+      border: 1px solid var(--line-soft);
+      border-radius: 50%;
+      background: #fff;
+      color: var(--ink);
+      box-shadow: var(--shadow-float);
+      cursor: pointer;
+      font: inherit;
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1;
+      transform: translateY(-50%);
+    }
+
+    .scene-arrow-button.prev {
+      left: -28px;
+    }
+
+    .scene-arrow-button.next {
+      right: -28px;
+    }
+
+    .scene-arrow-button:hover {
+      border-color: #000;
+      background: #000;
+      color: #fff;
+    }
+
+    .scene-dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .scene-dot {
+      width: 9px;
+      height: 9px;
+      border: 0;
+      border-radius: 50%;
+      background: #c5cad5;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .scene-dot[aria-selected="true"] {
+      background: #111;
+    }
+
+    model-viewer {
+      width: 100%;
+      height: min(42vh, 460px);
+      min-height: 340px;
+      background: #10151c;
+    }
+
+    .pointcloud-loading {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at center, rgba(26, 34, 45, 0.82), rgba(10, 15, 22, 0.94));
+      color: #fff;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease;
+    }
+
+    .viewer-shell.is-loading .pointcloud-loading {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .loading-indicator {
+      display: grid;
+      justify-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .loading-spinner {
+      width: 38px;
+      height: 38px;
+      border: 3px solid rgba(255, 255, 255, 0.25);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .view-presets {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .view-preset {
+      border: 1px solid var(--line-soft);
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: var(--shadow-soft);
+      cursor: pointer;
+      padding: 12px;
+      text-align: left;
+      font: inherit;
+      transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    }
+
+    .view-preset:hover {
+      border-color: var(--line-strong);
+      box-shadow: var(--shadow-card);
+      transform: translateY(-1px);
+    }
+
+    .preset-thumb {
+      display: block;
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      border: 1px solid var(--line-soft);
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.03);
+    }
+
+    img.preset-thumb {
+      object-fit: cover;
+    }
+
+    .preset-label {
+      display: block;
+      margin-top: 10px;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .view-params {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .view-params code {
+      color: var(--ink);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    pre {
+      margin: 26px 0 0;
+      padding: 20px;
+      overflow-x: auto;
+      border: 1px solid var(--line-soft);
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: var(--shadow-soft);
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    footer {
+      padding: 42px 0 64px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    @media (max-width: 860px) {
+      .top-nav {
+        justify-content: center;
+        gap: 16px;
+        padding-top: 18px;
+        font-size: 13px;
+      }
+
+      .grid,
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .table-pager {
+        align-items: center;
+      }
+
+      .table-arrow-button {
+        width: 42px;
+        height: 42px;
+        font-size: 26px;
+      }
+
+      .table-arrow-button.prev {
+        left: 10px;
+      }
+
+      .table-arrow-button.next {
+        right: 10px;
+      }
+
+      model-viewer {
+        height: 300px;
+        min-height: 240px;
+      }
+
+      .scene-arrow-button {
+        width: 48px;
+        height: 48px;
+        font-size: 28px;
+      }
+
+      .scene-arrow-button.prev {
+        left: 12px;
+      }
+
+      .scene-arrow-button.next {
+        right: 12px;
+      }
+
+      .model-switcher {
+        flex-wrap: wrap;
+      }
+
+      .view-presets {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <nav class="top-nav" aria-label="Page navigation">
+      <a href="#abstract">Abstract</a>
+      <a href="#method">Method</a>
+      <a href="#results">Experiments</a>
+      <a href="#pointclouds">Visual Results</a>
+    </nav>
+    <div class="container title-wrap">
+      <h1>SurroundNEXO</h1>
+      <p class="subtitle">
+        <span class="subtitle-line">Ego-Centric Metric Bridging for Spatially Consistent Geometry</span>
+        <span class="subtitle-line">in Autonomous Driving</span>
+      </p>
+      <p class="authors">
+        <span class="author-block">Shuai Yuan<sup>1,2</sup></span>
+        <span class="author-block">Runxi Tang<sup>1</sup></span>
+        <span class="author-block">Yuzhou Ji<sup>1</sup></span>
+        <span class="author-block">Fudong Ge<sup>1,2</sup></span>
+        <span class="author-block">Hanshi Wang<sup>1,2</sup></span>
+        <span class="author-block">Yifei Wang<sup>2</sup></span>
+        <span class="author-block">Xianming Zeng<sup>2</sup></span>
+        <span class="author-block">Jianyun Xu<sup>2</sup></span>
+        <span class="author-block">Xingliang Liu<sup>2</sup></span>
+        <span class="author-block">Yanfeng Wang<sup>1</sup></span>
+        <span class="author-block">Zhipeng Zhang<sup>1,†</sup></span>
+      </p>
+      <p class="institution">
+        <span><sup>1</sup>AUTOLab, Shanghai Jiao Tong University</span>
+        <span><sup>2</sup>HELLO</span><br>
+        <span><sup>†</sup>Corresponding author</span>
+      </p>
+      <div class="links">
+        <a class="pill" href="https://arxiv.org/abs/xxx" target="_blank" rel="noopener">Paper</a>
+        <a class="pill secondary" href="#" aria-disabled="true">GitHub Code</a>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="container-wide">
+      <div class="figure-card">
+        <img src="assets/teaser.png" alt="SurroundNEXO teaser">
+        <p class="caption teaser-caption">SurroundNEXO bridges low-overlap surround cameras through an ego-centric metric reference instead of relying on dense visual correspondences.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="abstract">
+    <div class="container">
+      <h2>Abstract</h2>
+      <p class="lead">
+        Modern autonomous driving requires metric 3D understanding that is accurate within each camera and spatially consistent across a surround-view rig. SurroundNEXO grounds cross-view reasoning in ego-centric geometry, uses sparse LiDAR observations as metric anchors, and progressively expands feature interaction from view-local modeling to global integration.
+      </p>
+      <div class="metrics">
+        <div class="metric metric-red"><strong>33.2%<span class="arrow">↑</span></strong><span>Single-view Accuracy</span></div>
+        <div class="metric metric-teal"><strong>10.5%<span class="arrow">↑</span></strong><span>Cross-view Consistency</span></div>
+        <div class="metric metric-purple"><strong>25.6%<span class="arrow">↑</span></strong><span>3D Reconstruction Quality</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="method">
+    <div class="container-wide">
+      <h2>Method</h2>
+      <p class="lead">The method follows the calibrated structure of a driving rig: organize visual tokens in a shared ego frame, inject sparse metric scale, and then progressively expand interaction across views and time.</p>
+      <div class="figure-card">
+        <img src="assets/pipeline.png" alt="SurroundNEXO pipeline">
+      </div>
+      <div class="grid">
+        <article class="card">
+          <h3>ERPE</h3>
+          <p>Ego-Ray Positional Encoding maps image patches to globally comparable ego-frame viewing directions.</p>
+        </article>
+        <article class="card">
+          <h3>SMA</h3>
+          <p>Sparse Metric Anchoring propagates absolute scale from sparse LiDAR observations to dense visual tokens.</p>
+        </article>
+        <article class="card">
+          <h3>PGT</h3>
+          <p>Progressive Geometry Transformer schedules interaction from intra-view to cross-view, cross-frame, and global reasoning.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <div class="container-wide">
+      <h2>Results</h2>
+      <p class="lead">Across depth accuracy, cross-view consistency, sparse-prompt robustness, and 3D reconstruction, SurroundNEXO consistently improves metric geometry in low-overlap autonomous driving scenes.</p>
+
+      <div class="table-pager">
+        <div class="tabs" role="tablist" aria-label="Experiment tables">
+          <button class="tab" type="button" role="tab" aria-selected="true" data-table-index="0">Cross-View Consistency</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" data-table-index="1">Single-View Accuracy</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" data-table-index="2">Sparse Prompt</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" data-table-index="3">3D Reconstruction</button>
+        </div>
+      </div>
+
+      <div class="table-shell">
+        <button class="table-arrow-button prev" type="button" data-table-prev aria-label="Previous experiment table" title="Previous table"><span aria-hidden="true">&lsaquo;</span></button>
+        <div data-table-pages>
+        <section class="table-card table-page" aria-label="Single-view metric depth table">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th rowspan="2">Method</th>
+                  <th rowspan="2">Alignment</th>
+                  <th colspan="2">Waymo</th>
+                  <th colspan="2">NuScenes</th>
+                  <th colspan="2">KITTI</th>
+                  <th colspan="2">DDAD</th>
+                  <th colspan="2">OpenScene</th>
+                </tr>
+                <tr>
+                  <th>Abs Rel ↓</th><th>&delta;&lt;1.25 ↑</th>
+                  <th>Abs Rel ↓</th><th>&delta;&lt;1.25 ↑</th>
+                  <th>Abs Rel ↓</th><th>&delta;&lt;1.25 ↑</th>
+                  <th>Abs Rel ↓</th><th>&delta;&lt;1.25 ↑</th>
+                  <th>Abs Rel ↓</th><th>&delta;&lt;1.25 ↑</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="group-row"><td colspan="12">Single-view</td></tr>
+                <tr><td>Depth-Pro</td><td>Metric</td><td>0.390</td><td>0.230</td><td>0.236</td><td>0.522</td><td>0.135</td><td>0.876</td><td>0.450</td><td>0.176</td><td>0.259</td><td>0.477</td></tr>
+                <tr><td>UniDepth-2</td><td>Metric</td><td>0.147</td><td>0.829</td><td>0.120</td><td class="rank-second">0.934</td><td>0.071</td><td class="rank-third">0.962</td><td class="rank-third">0.091</td><td class="rank-third">0.941</td><td>0.142</td><td>0.913</td></tr>
+                <tr><td>MoGe-2</td><td>Metric</td><td>0.177</td><td>0.630</td><td>0.129</td><td>0.851</td><td>0.240</td><td>0.273</td><td>0.124</td><td>0.796</td><td class="rank-second">0.094</td><td class="rank-second">0.937</td></tr>
+                <tr><td>MetricAny.</td><td>Metric</td><td>0.097</td><td class="rank-second">0.943</td><td>0.160</td><td>0.851</td><td>0.151</td><td>0.710</td><td class="rank-second">0.085</td><td class="rank-second">0.944</td><td>0.152</td><td>0.860</td></tr>
+                <tr class="group-row"><td colspan="12">Multi-view</td></tr>
+                <tr><td>VGGT</td><td>Scale</td><td>0.134</td><td>0.857</td><td>0.213</td><td>0.773</td><td>0.092</td><td>0.941</td><td>0.185</td><td>0.707</td><td>0.178</td><td>0.808</td></tr>
+                <tr><td>Pi3</td><td>Scale</td><td class="rank-third">0.096</td><td>0.914</td><td>0.122</td><td>0.869</td><td class="rank-first">0.056</td><td class="rank-first">0.972</td><td>0.139</td><td>0.802</td><td>0.128</td><td>0.889</td></tr>
+                <tr><td>OmniVGGT</td><td>Scale</td><td>0.104</td><td>0.925</td><td>0.194</td><td>0.762</td><td>0.095</td><td>0.927</td><td>0.195</td><td>0.682</td><td>0.267</td><td>0.814</td></tr>
+                <tr><td>MapAny.</td><td>Metric</td><td class="rank-third">0.096</td><td>0.911</td><td class="rank-third">0.115</td><td>0.879</td><td>0.096</td><td>0.922</td><td>0.114</td><td>0.867</td><td>0.115</td><td>0.870</td></tr>
+                <tr><td>DVGT</td><td>Metric</td><td>0.227</td><td>0.615</td><td>0.127</td><td>0.871</td><td class="rank-third">0.068</td><td class="rank-second">0.969</td><td>0.097</td><td>0.922</td><td>0.110</td><td>0.909</td></tr>
+                <tr><td>DA3-G</td><td>Scale</td><td>0.172</td><td>0.789</td><td>0.147</td><td>0.827</td><td class="rank-second">0.063</td><td class="rank-second">0.969</td><td>0.142</td><td>0.812</td><td>0.132</td><td>0.875</td></tr>
+                <tr><td>DA3-G†</td><td>Metric</td><td class="rank-second">0.082</td><td class="rank-third">0.937</td><td class="rank-second">0.112</td><td class="rank-third">0.911</td><td>0.102</td><td>0.929</td><td>0.114</td><td>0.906</td><td class="rank-third">0.105</td><td class="rank-third">0.916</td></tr>
+                <tr class="ours-row"><td>Ours</td><td>Metric</td><td class="rank-first">0.048</td><td class="rank-first">0.975</td><td class="rank-first">0.079</td><td class="rank-first">0.950</td><td>0.070</td><td class="rank-second">0.969</td><td class="rank-first">0.077</td><td class="rank-first">0.956</td><td class="rank-first">0.084</td><td class="rank-first">0.938</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="table-card table-page active" aria-label="Cross-view depth consistency table">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th rowspan="2">Method</th>
+                  <th colspan="4">NuScenes</th>
+                  <th colspan="4">DDAD</th>
+                </tr>
+                <tr>
+                  <th>Abs Rel ↓</th><th>Sq Rel ↓</th><th>RMSE ↓</th><th>&delta;&lt;1.25 ↑</th>
+                  <th>Abs Rel ↓</th><th>Sq Rel ↓</th><th>RMSE ↓</th><th>&delta;&lt;1.25 ↑</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="group-row"><td colspan="9">Single-view</td></tr>
+                <tr><td>Depth-Pro</td><td>0.353</td><td>3.482</td><td>6.461</td><td>0.476</td><td>0.625</td><td>6.654</td><td>7.772</td><td>0.276</td></tr>
+                <tr><td>UniDepth-2</td><td class="rank-third">0.198</td><td>2.691</td><td>6.216</td><td>0.341</td><td class="rank-second">0.196</td><td>2.228</td><td>6.205</td><td>0.763</td></tr>
+                <tr><td>MoGe-2</td><td>0.235</td><td>2.683</td><td>6.281</td><td>0.680</td><td>0.347</td><td>3.598</td><td>7.274</td><td>0.544</td></tr>
+                <tr><td>MetricAny.</td><td>0.208</td><td>2.512</td><td>6.156</td><td>0.728</td><td class="rank-third">0.198</td><td>2.340</td><td>5.834</td><td class="rank-second">0.799</td></tr>
+                <tr class="group-row"><td colspan="9">Multi-view</td></tr>
+                <tr><td>VGGT</td><td>0.220</td><td>2.272</td><td>5.608</td><td>0.660</td><td>0.303</td><td>2.522</td><td>5.680</td><td>0.629</td></tr>
+                <tr><td>Pi3</td><td>0.211</td><td>2.387</td><td>5.959</td><td>0.707</td><td>0.321</td><td>3.571</td><td>6.865</td><td>0.604</td></tr>
+                <tr><td>OmniVGGT</td><td>0.210</td><td class="rank-third">1.977</td><td class="rank-second">4.671</td><td>0.660</td><td>0.269</td><td class="rank-second">2.083</td><td class="rank-second">5.336</td><td>0.562</td></tr>
+                <tr><td>MapAny.</td><td>0.328</td><td>5.348</td><td>7.212</td><td class="rank-third">0.741</td><td>0.490</td><td>8.889</td><td>8.428</td><td>0.682</td></tr>
+                <tr><td>DVGT</td><td>0.229</td><td>2.629</td><td>5.949</td><td>0.705</td><td>0.241</td><td>2.275</td><td>5.994</td><td>0.712</td></tr>
+                <tr><td>DA3-G</td><td>0.217</td><td>2.111</td><td>5.443</td><td>0.684</td><td>0.314</td><td>3.633</td><td>5.945</td><td>0.576</td></tr>
+                <tr><td>DA3-G†</td><td class="rank-second">0.173</td><td class="rank-second">1.897</td><td class="rank-third">5.132</td><td class="rank-second">0.801</td><td>0.238</td><td class="rank-third">2.218</td><td class="rank-third">5.589</td><td class="rank-third">0.769</td></tr>
+                <tr class="ours-row"><td>Ours</td><td class="rank-first">0.139</td><td class="rank-first">1.654</td><td class="rank-first">4.527</td><td class="rank-first">0.850</td><td class="rank-first">0.162</td><td class="rank-first">1.840</td><td class="rank-first">5.333</td><td class="rank-first">0.837</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="table-card table-page" aria-label="Sparse prompt depth table">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th rowspan="3">Method</th>
+                  <th colspan="6">Waymo</th>
+                  <th colspan="6">NuScenes</th>
+                </tr>
+                <tr>
+                  <th colspan="2">Avg.</th>
+                  <th colspan="2">Lidar-4</th>
+                  <th colspan="2">Random-0.1%</th>
+                  <th colspan="2">Avg.</th>
+                  <th colspan="2">Lidar-4</th>
+                  <th colspan="2">Random-0.1%</th>
+                </tr>
+                <tr>
+                  <th>Abs Rel ↓</th><th>RMSE ↓</th>
+                  <th>Abs Rel ↓</th><th>RMSE ↓</th>
+                  <th>Abs Rel ↓</th><th>RMSE ↓</th>
+                  <th>Abs Rel ↓</th><th>RMSE ↓</th>
+                  <th>Abs Rel ↓</th><th>RMSE ↓</th>
+                  <th>Abs Rel ↓</th><th>RMSE ↓</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Omni-DC</td><td>0.133</td><td>4.298</td><td>0.211</td><td>6.534</td><td class="rank-third">0.208</td><td class="rank-third">5.592</td><td>0.287</td><td>6.555</td><td>0.158</td><td>4.163</td><td>0.754</td><td>15.056</td></tr>
+                <tr><td>PromptDA</td><td>0.495</td><td>14.271</td><td>0.503</td><td>14.334</td><td>0.453</td><td>12.785</td><td>0.507</td><td>12.047</td><td>0.507</td><td>11.717</td><td>0.538</td><td>13.331</td></tr>
+                <tr><td>PriorDA</td><td class="rank-second">0.054</td><td class="rank-second">2.258</td><td class="rank-second">0.057</td><td class="rank-second">2.455</td><td class="rank-second">0.053</td><td class="rank-second">2.336</td><td class="rank-first">0.084</td><td class="rank-second">2.567</td><td class="rank-first">0.075</td><td class="rank-second">2.280</td><td class="rank-second">0.139</td><td class="rank-second">3.976</td></tr>
+                <tr><td>LB-Depth</td><td>0.126</td><td>4.433</td><td class="rank-third">0.069</td><td>3.544</td><td>0.314</td><td>7.780</td><td class="rank-third">0.173</td><td class="rank-third">5.280</td><td>0.119</td><td>4.937</td><td class="rank-third">0.327</td><td class="rank-third">6.560</td></tr>
+                <tr><td>Any2Full</td><td class="rank-third">0.090</td><td class="rank-third">2.850</td><td>0.117</td><td class="rank-third">2.484</td><td>0.325</td><td>6.719</td><td>0.542</td><td>6.946</td><td class="rank-second">0.080</td><td class="rank-third">2.754</td><td>1.927</td><td>19.469</td></tr>
+                <tr class="ours-row"><td>Ours</td><td class="rank-first">0.053</td><td class="rank-first">1.946</td><td class="rank-first">0.054</td><td class="rank-first">1.989</td><td class="rank-first">0.049</td><td class="rank-first">1.843</td><td class="rank-second">0.087</td><td class="rank-first">2.005</td><td class="rank-third">0.083</td><td class="rank-first">1.893</td><td class="rank-first">0.103</td><td class="rank-first">2.343</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="table-card table-page" aria-label="Reconstruction and zero-shot table">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th rowspan="2">Method</th>
+                  <th rowspan="2">Alignment</th>
+                  <th colspan="2">Waymo</th>
+                  <th colspan="2">NuScenes</th>
+                  <th colspan="2">KITTI</th>
+                  <th colspan="2">DDAD</th>
+                  <th colspan="2">OpenScene</th>
+                  <th rowspan="2">Time</th>
+                </tr>
+                <tr>
+                  <th>Acc. ↓</th><th>Comp. ↓</th>
+                  <th>Acc. ↓</th><th>Comp. ↓</th>
+                  <th>Acc. ↓</th><th>Comp. ↓</th>
+                  <th>Acc. ↓</th><th>Comp. ↓</th>
+                  <th>Acc. ↓</th><th>Comp. ↓</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>VGGT</td><td>Scale</td><td>0.554</td><td>0.290</td><td>0.603</td><td>0.346</td><td>0.182</td><td>0.258</td><td>0.410</td><td>0.272</td><td>0.246</td><td>0.219</td><td>~55.62s</td></tr>
+                <tr><td>Pi3</td><td>Scale</td><td>0.585</td><td>0.258</td><td>0.400</td><td class="rank-third">0.249</td><td class="rank-second">0.144</td><td class="rank-second">0.111</td><td>0.310</td><td class="rank-third">0.172</td><td>0.249</td><td class="rank-second">0.171</td><td>~35.08s</td></tr>
+                <tr><td>OmniVGGT</td><td>Scale</td><td>0.525</td><td>0.387</td><td>0.526</td><td>0.430</td><td>0.176</td><td>0.326</td><td>0.409</td><td>0.513</td><td>0.268</td><td>0.432</td><td>~45.59s</td></tr>
+                <tr><td>DVGT</td><td>Metric</td><td>0.756</td><td>0.481</td><td>1.078</td><td>0.808</td><td>0.522</td><td>0.743</td><td>0.371</td><td>0.705</td><td>0.306</td><td>0.381</td><td class="rank-first">~19.73s</td></tr>
+                <tr><td>DA3-G</td><td>Scale</td><td class="rank-third">0.333</td><td class="rank-third">0.216</td><td class="rank-third">0.360</td><td>0.275</td><td class="rank-third">0.155</td><td>0.128</td><td class="rank-second">0.252</td><td>0.212</td><td class="rank-third">0.206</td><td>0.222</td><td class="rank-third">~31.79s</td></tr>
+                <tr><td>DA3-G†</td><td>Metric</td><td>0.335</td><td class="rank-second">0.210</td><td>0.381</td><td>0.256</td><td>0.222</td><td>0.156</td><td class="rank-third">0.295</td><td>0.195</td><td>0.270</td><td>0.244</td><td class="rank-third">~31.79s</td></tr>
+                <tr><td>MapAny.</td><td>Metric</td><td class="rank-second">0.288</td><td>0.361</td><td class="rank-second">0.330</td><td class="rank-second">0.201</td><td class="rank-first">0.125</td><td class="rank-first">0.100</td><td>0.361</td><td class="rank-second">0.150</td><td class="rank-second">0.198</td><td class="rank-third">0.190</td><td>~34.49s</td></tr>
+                <tr class="ours-row"><td>Ours</td><td>Metric</td><td class="rank-first">0.223</td><td class="rank-first">0.133</td><td class="rank-first">0.281</td><td class="rank-first">0.173</td><td>0.170</td><td class="rank-third">0.125</td><td class="rank-first">0.221</td><td class="rank-first">0.128</td><td class="rank-first">0.145</td><td class="rank-first">0.116</td><td class="rank-second">~25.12s</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+        </section>
+        </div>
+        <button class="table-arrow-button next" type="button" data-table-next aria-label="Next experiment table" title="Next table"><span aria-hidden="true">&rsaquo;</span></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="pointclouds">
+    <div class="container-wide">
+      <h2>Qualitive Results</h2>
+      <p class="lead">Each scene uses lightweight GLB previews. Use the arrow beside the viewer to flip scenes, then drag to rotate and scroll or pinch to zoom.</p>
+      <div class="model-switcher" role="tablist" aria-label="3D reconstruction models">
+        <button class="model-button" type="button" aria-selected="true" data-model-key="da3" data-model-name="DA3">DA3</button>
+        <button class="model-button" type="button" aria-selected="false" data-model-key="moge" data-model-name="MoGe-2">MoGe-2</button>
+        <button class="model-button" type="button" aria-selected="false" data-model-key="ours" data-model-name="Ours: SurroundNEXO">Ours</button>
+      </div>
+      <div class="viewer-shell is-loading">
+        <button class="scene-arrow-button prev" type="button" data-scene-prev aria-label="Previous point cloud scene" title="Previous scene"><span aria-hidden="true">&lsaquo;</span></button>
+        <article class="viewer-card">
+          <model-viewer id="reconstruction-viewer" src="assets/pointclouds/scene002_da3.glb" alt="DA3 point cloud" camera-controls loading="lazy" reveal="auto" shadow-intensity="0" exposure="1" camera-orbit="0deg 65deg auto" min-camera-orbit="auto auto 1m" field-of-view="35deg"></model-viewer>
+          <div class="pointcloud-loading" aria-live="polite" aria-label="Loading point cloud">
+            <div class="loading-indicator">
+              <span class="loading-spinner" aria-hidden="true"></span>
+              <span data-loading-text>Loading point cloud...</span>
+            </div>
+          </div>
+        </article>
+        <button class="scene-arrow-button next" type="button" data-scene-next aria-label="Next point cloud scene" title="Next scene"><span aria-hidden="true">&rsaquo;</span></button>
+      </div>
+      <div class="scene-dots" role="tablist" aria-label="Point cloud scenes">
+        <button class="scene-dot" type="button" aria-selected="true" aria-label="Scene 1" data-scene-dot="0"></button>
+        <button class="scene-dot" type="button" aria-selected="false" aria-label="Scene 2" data-scene-dot="1"></button>
+        <button class="scene-dot" type="button" aria-selected="false" aria-label="Scene 3" data-scene-dot="2"></button>
+      </div>
+      <div class="view-presets" aria-label="Preset camera views">
+        <button class="view-preset" type="button" data-orbit="138.0deg 70.9deg 57.86m" data-target="241.75m 4.70m -911.37m" data-fov="15.1deg">
+          <img class="preset-thumb" src="assets/view1-1.jpg" alt="Preset View 1 preview">
+          <span class="preset-label">View 1</span>
+        </button>
+        <button class="view-preset" type="button" data-orbit="14.9deg 72.9deg 103.21m" data-target="233.94m 12.81m -937.06m" data-fov="17.5deg">
+          <img class="preset-thumb" src="assets/view2-1.jpg" alt="Preset View 2 preview">
+          <span class="preset-label">View 2</span>
+        </button>
+        <button class="view-preset" type="button" data-orbit="0.2deg 66.7deg 53.43m" data-target="252.52m 2.77m -922.72m" data-fov="12.7deg">
+          <img class="preset-thumb" src="assets/view3-1.jpg" alt="Preset View 3 preview">
+          <span class="preset-label">View 3</span>
+        </button>
+      </div>
+      <!--
+      <p class="view-params">
+        Current view:
+        <code data-view-params>Interact with the point cloud to read camera parameters.</code>
+      </p>
+      -->
+    </div>
+  </section>
+
+  <section id="bibtex">
+    <div class="container">
+      <h2>BibTeX</h2>
+      <pre>@article{yuan2026surroundnexo,
+  title   = {SurroundNEXO: Ego-Centric Metric Bridging for Spatially Consistent Geometry in Autonomous Driving},
+  author  = {Yuan, Shuai and Tang, Runxi and Ji, Yuzhou and Ge, Fudong and Wang, Hanshi and Wang, Yifei and Zeng, Xianming and Xu, Jianyun and Liu, Xingliang and Wang, Yanfeng and Zhang, Zhipeng},
+  journal = {Preprint},
+  year    = {2026}
+}</pre>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">A minimal project page variant inspired by the arth-shukla.github.io template.</div>
+  </footer>
+
+  <script>
+    (() => {
+      const pages = Array.from(document.querySelectorAll('.table-page'));
+      const tabs = Array.from(document.querySelectorAll('.tab'));
+      const prev = document.querySelector('[data-table-prev]');
+      const next = document.querySelector('[data-table-next]');
+      if (!pages.length || !tabs.length || !prev || !next) return;
+      const pageOrder = [1, 0, 2, 3];
+      let activeIndex = 0;
+      const showTable = (index) => {
+        activeIndex = (index + pageOrder.length) % pageOrder.length;
+        const activePageIndex = pageOrder[activeIndex];
+        pages.forEach((page, pageIndex) => page.classList.toggle('active', pageIndex === activePageIndex));
+        tabs.forEach((tab, tabIndex) => tab.setAttribute('aria-selected', String(tabIndex === activeIndex)));
+        const activeLabel = tabs[activeIndex]?.textContent?.trim() || 'experiment table';
+        prev.setAttribute('title', `Current: ${activeLabel}`);
+        next.setAttribute('title', `Current: ${activeLabel}`);
+      };
+      tabs.forEach((tab) => tab.addEventListener('click', () => showTable(Number(tab.dataset.tableIndex))));
+      prev.addEventListener('click', () => showTable(activeIndex - 1));
+      next.addEventListener('click', () => showTable(activeIndex + 1));
+      showTable(activeIndex);
+    })();
+
+    (() => {
+      const viewer = document.querySelector('#reconstruction-viewer');
+      const viewerShell = document.querySelector('.viewer-shell');
+      const loadingText = document.querySelector('[data-loading-text]');
+      const buttons = Array.from(document.querySelectorAll('.model-button'));
+      const presetButtons = Array.from(document.querySelectorAll('.view-preset'));
+      const presetThumbs = Array.from(document.querySelectorAll('.preset-thumb'));
+      const sceneDots = Array.from(document.querySelectorAll('.scene-dot'));
+      const prevScene = document.querySelector('[data-scene-prev]');
+      const nextScene = document.querySelector('[data-scene-next]');
+      if (!viewer || !viewerShell || !buttons.length || !prevScene || !nextScene) return;
+
+      const scenes = [
+        {
+          name: 'Scene 002',
+          models: {
+            da3: 'assets/pointclouds/scene002_da3.glb',
+            moge: 'assets/pointclouds/scene002_moge.glb',
+            ours: 'assets/pointclouds/scene002_surroundnexo.glb',
+          },
+          presets: [
+            {
+              src: 'assets/view1-1.jpg',
+              orbit: '138.0deg 70.9deg 57.86m',
+              target: '241.75m 4.70m -911.37m',
+              fov: '15.1deg',
+            },
+            {
+              src: 'assets/view2-1.jpg',
+              orbit: '14.9deg 72.9deg 103.21m',
+              target: '233.94m 12.81m -937.06m',
+              fov: '17.5deg',
+            },
+            {
+              src: 'assets/view3-1.jpg',
+              orbit: '0.2deg 66.7deg 53.43m',
+              target: '252.52m 2.77m -922.72m',
+              fov: '12.7deg',
+            },
+          ],
+        },
+        {
+          name: 'Scene 003',
+          models: {
+            da3: 'assets/pointclouds/scene003_da3.glb',
+            moge: 'assets/pointclouds/scene003_moge.glb',
+            ours: 'assets/pointclouds/scene003_surroundnexo.glb',
+          },
+          presets: [
+            {
+              src: 'assets/view1-2.jpg',
+              orbit: '-35.7deg 69.0deg 46.17m',
+              target: '1762.98m 4.30m -874.53m',
+              fov: '13.0deg',
+            },
+            {
+              src: 'assets/view2-2.jpg',
+              orbit: '-53.9deg 73.6deg 48.44m',
+              target: '1784.65m 1.54m -873.64m',
+              fov: '13.7deg',
+            },
+            {
+              src: 'assets/view3-2.jpg',
+              orbit: '-117.6deg 81.1deg 52.08m',
+              target: '1792.24m 7.52m -856.22m',
+              fov: '14.2deg',
+            },
+          ],
+        },
+        {
+          name: 'Scene 027',
+          models: {
+            da3: 'assets/pointclouds/scene027_da3.glb',
+            moge: 'assets/pointclouds/scene027_moge.glb',
+            ours: 'assets/pointclouds/scene027_surroundnexo.glb',
+          },
+          presets: [
+            {
+              src: 'assets/view1-3.jpg',
+              orbit: '156.9deg 76.7deg 61.85m',
+              target: '897.28m 8.12m -1607.07m',
+              fov: '14.5deg',
+            },
+            {
+              src: 'assets/view2-3.jpg',
+              orbit: '80.3deg 64.6deg 68.66m',
+              target: '887.14m 8.97m -1621.63m',
+              fov: '12.9deg',
+            },
+            {
+              src: 'assets/view3-3.jpg',
+              orbit: '331.4deg 41.3deg 30.35m',
+              target: '918.29m 3.34m -1626.71m',
+              fov: '12.4deg',
+            },
+          ],
+        },
+      ];
+
+      let activeSceneIndex = 0;
+      let activeModelKey = buttons.find((button) => button.getAttribute('aria-selected') === 'true')?.dataset.modelKey || 'da3';
+      const overviewCamera = {
+        orbit: viewer.getAttribute('camera-orbit') || '0deg 65deg auto',
+        target: viewer.getAttribute('camera-target') || 'auto auto auto',
+        fov: viewer.getAttribute('field-of-view') || '35deg',
+      };
+
+      const radToDeg = (value) => value * 180 / Math.PI;
+      const formatAngle = (value) => {
+        const degrees = Math.abs(value) <= Math.PI * 2 + 0.001 ? radToDeg(value) : value;
+        return `${degrees.toFixed(1)}deg`;
+      };
+      const formatMeters = (value) => `${value.toFixed(2)}m`;
+
+      const readCurrentCamera = () => {
+        if (!viewer.getCameraOrbit || !viewer.getCameraTarget || !viewer.getFieldOfView) return null;
+        const orbit = viewer.getCameraOrbit();
+        const target = viewer.getCameraTarget();
+        const fov = viewer.getFieldOfView();
+        return {
+          orbit: `${formatAngle(orbit.theta)} ${formatAngle(orbit.phi)} ${formatMeters(orbit.radius)}`,
+          target: `${formatMeters(target.x)} ${formatMeters(target.y)} ${formatMeters(target.z)}`,
+          fov: formatAngle(fov),
+        };
+      };
+
+      const applyCamera = (camera) => {
+        if (!camera) return;
+        viewer.setAttribute('camera-orbit', camera.orbit);
+        viewer.setAttribute('camera-target', camera.target);
+        viewer.setAttribute('field-of-view', camera.fov);
+        if (viewer.jumpCameraToGoal) viewer.jumpCameraToGoal();
+      };
+
+      const updateViewer = ({ resetCamera = false } = {}) => {
+        const scene = scenes[activeSceneIndex];
+        const activeButton = buttons.find((button) => button.dataset.modelKey === activeModelKey) || buttons[0];
+        const cameraBeforeModelSwitch = resetCamera ? null : readCurrentCamera();
+        activeModelKey = activeButton.dataset.modelKey;
+        buttons.forEach((button) => button.setAttribute('aria-selected', String(button === activeButton)));
+        const nextSrc = scene.models[activeModelKey];
+        if (viewer.getAttribute('src') !== nextSrc) {
+          viewerShell.classList.add('is-loading');
+          if (loadingText) loadingText.textContent = 'Loading point cloud...';
+          viewer.setAttribute('src', nextSrc);
+        }
+        viewer.setAttribute('alt', `${activeButton.dataset.modelName} point cloud for ${scene.name}`);
+        scene.presets.forEach((preset, index) => {
+          const thumb = presetThumbs[index];
+          const presetButton = presetButtons[index];
+          if (!thumb || !presetButton) return;
+          thumb.setAttribute('src', preset.src);
+          thumb.setAttribute('alt', `${scene.name} preset view ${index + 1} preview`);
+          presetButton.dataset.orbit = preset.orbit;
+          presetButton.dataset.target = preset.target;
+          presetButton.dataset.fov = preset.fov;
+        });
+        prevScene.setAttribute('aria-label', `Previous point cloud scene. Current: ${scene.name}`);
+        prevScene.setAttribute('title', `Current: ${scene.name}`);
+        nextScene.setAttribute('aria-label', `Next point cloud scene. Current: ${scene.name}`);
+        nextScene.setAttribute('title', `Current: ${scene.name}`);
+        sceneDots.forEach((dot, index) => {
+          dot.setAttribute('aria-selected', String(index === activeSceneIndex));
+        });
+
+        if (resetCamera) {
+          applyCamera(overviewCamera);
+          return;
+        }
+        applyCamera(cameraBeforeModelSwitch);
+      };
+
+      viewer.addEventListener('load', () => {
+        viewerShell.classList.remove('is-loading');
+      });
+
+      viewer.addEventListener('progress', (event) => {
+        const progress = Math.round((event.detail?.totalProgress || 0) * 100);
+        if (progress < 100) {
+          viewerShell.classList.add('is-loading');
+          if (loadingText) loadingText.textContent = `Loading point cloud... ${progress}%`;
+          return;
+        }
+        viewerShell.classList.remove('is-loading');
+      });
+
+      viewer.addEventListener('error', () => {
+        if (loadingText) loadingText.textContent = 'Point cloud failed to load.';
+        viewerShell.classList.remove('is-loading');
+      });
+
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          activeModelKey = button.dataset.modelKey;
+          updateViewer({ resetCamera: false });
+        });
+      });
+
+      prevScene.addEventListener('click', () => {
+        activeSceneIndex = (activeSceneIndex + scenes.length - 1) % scenes.length;
+        updateViewer({ resetCamera: true });
+      });
+
+      nextScene.addEventListener('click', () => {
+        activeSceneIndex = (activeSceneIndex + 1) % scenes.length;
+        updateViewer({ resetCamera: true });
+      });
+
+      sceneDots.forEach((dot) => {
+        dot.addEventListener('click', () => {
+          activeSceneIndex = Number(dot.dataset.sceneDot);
+          updateViewer({ resetCamera: true });
+        });
+      });
+
+      updateViewer({ resetCamera: false });
+      if (viewer.loaded) viewerShell.classList.remove('is-loading');
+    })();
+
+    (() => {
+      const viewer = document.querySelector('#reconstruction-viewer');
+      const presetButtons = Array.from(document.querySelectorAll('.view-preset'));
+      const paramsOutput = document.querySelector('[data-view-params]');
+      if (!viewer || !presetButtons.length) return;
+
+      const radToDeg = (value) => value * 180 / Math.PI;
+      const formatAngle = (value) => {
+        const degrees = Math.abs(value) <= Math.PI * 2 + 0.001 ? radToDeg(value) : value;
+        return `${degrees.toFixed(1)}deg`;
+      };
+      const formatMeters = (value) => `${value.toFixed(2)}m`;
+
+      const updateViewParams = () => {
+        if (!paramsOutput) return;
+        if (!viewer.getCameraOrbit || !viewer.getCameraTarget || !viewer.getFieldOfView) return;
+        const orbit = viewer.getCameraOrbit();
+        const target = viewer.getCameraTarget();
+        const fov = viewer.getFieldOfView();
+        paramsOutput.textContent =
+          `camera-orbit="${formatAngle(orbit.theta)} ${formatAngle(orbit.phi)} ${formatMeters(orbit.radius)}" ` +
+          `camera-target="${formatMeters(target.x)} ${formatMeters(target.y)} ${formatMeters(target.z)}" ` +
+          `field-of-view="${formatAngle(fov)}"`;
+      };
+
+      presetButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          viewer.setAttribute('camera-orbit', button.dataset.orbit);
+          viewer.setAttribute('camera-target', button.dataset.target);
+          viewer.setAttribute('field-of-view', button.dataset.fov);
+          if (viewer.jumpCameraToGoal) viewer.jumpCameraToGoal();
+          window.setTimeout(updateViewParams, 50);
+        });
+      });
+
+      viewer.addEventListener('camera-change', updateViewParams);
+      viewer.addEventListener('load', updateViewParams);
+    })();
+  </script>
+</body>
+</html>
