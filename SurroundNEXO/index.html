@@ -609,6 +609,14 @@
       }
     }
 
+    .view-hint {
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+    }
+
     .view-presets {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -632,6 +640,46 @@
       border-color: var(--line-strong);
       box-shadow: var(--shadow-card);
       transform: translateY(-1px);
+    }
+
+    .view-preset:hover .preset-label {
+      color: var(--blue);
+    }
+
+    .preset-thumb-wrap {
+      position: relative;
+      display: block;
+      overflow: hidden;
+      border: 1px solid var(--line-soft);
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.03);
+    }
+
+    .preset-thumb-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.18));
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 160ms ease;
+    }
+
+    .view-preset:hover .preset-thumb-wrap::after {
+      opacity: 1;
+    }
+
+    .preset-thumb {
+      display: block;
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      background: #fff;
+      transition: transform 180ms ease;
+    }
+
+    .view-preset:hover .preset-thumb {
+      transform: scale(1.03);
     }
 
     .preset-thumb {
@@ -765,7 +813,7 @@
         <span class="subtitle-line">in Autonomous Driving</span>
       </p>
       <p class="authors">
-        <span class="author-block">Shuai Yuan<sup>1, 2</sup></span>
+        <span class="author-block">Shuai Yuan<sup>1, 2, *</sup></span>
         <span class="author-block">Runxi Tang<sup>1</sup></span>
         <span class="author-block">Yuzhou Ji<sup>1</sup></span>
         <span class="author-block">Fudong Ge<sup>1, 2</sup></span>
@@ -778,18 +826,45 @@
         <span class="author-block">Zhipeng Zhang<sup>1,†</sup></span>
       </p>
       <p class="institution">
-    <span><sup>1</sup>AutoLab, School of Artificial Intelligence, Shanghai Jiao Tong University</span><br>
+    <span><sup>1</sup>School of Artificial Intelligence, Shanghai Jiao Tong University</span><br>
     <span><sup>2</sup>Hello Inc.</span><br>
     
-    <span style="margin-right: 15px;"><sup>*</sup>Work done at Hello Inc.</span>
     <span><sup>†</sup>Corresponding author</span>
-</p>
+<!-- </p>
       <div class="links">
         <a class="pill" href="https://arxiv.org/abs/xxx" target="_blank" rel="noopener">Paper</a>
-        <a class="pill secondary" href="https://github.com/AutoLab-SAI-SJTU/SurroundNEXO" aria-disabled="true">Code (Coming Soon)</a>
+        <a class="pill" href="https://github.com/AutoLab-SAI-SJTU/SurroundNEXO" target="_blank" rel="noopener">Code</a>
       </div>
     </div>
-  </header>
+  </header> -->
+<style>
+  /* 确保图标和文字垂直居中，并保持一点间距 */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none; /* 如果你还没有设置去下划线的话 */
+  }
+</style>
+
+</p>
+<div class="links">
+  <a class="pill" href="https://arxiv.org/abs/xxx" target="_blank" rel="noopener">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M4 0h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5.5 1.5v2a1 1 0 0 0 1 1h2l-3-3zM4.5 9a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4z"/>
+    </svg>
+    Paper
+  </a>
+
+  <a class="pill" href="https://github.com/AutoLab-SAI-SJTU/SurroundNEXO" target="_blank" rel="noopener">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+    </svg>
+    Code
+  </a>
+</div>
+</div>
+</header>
 
   <section>
     <div class="container-wide">
@@ -1037,17 +1112,24 @@
         <button class="scene-dot" type="button" aria-selected="false" aria-label="Scene 2" data-scene-dot="1"></button>
         <button class="scene-dot" type="button" aria-selected="false" aria-label="Scene 3" data-scene-dot="2"></button>
       </div>
+      <p class="view-hint">Click preset buttons below to jump to specific views.</p>
       <div class="view-presets" aria-label="Preset camera views">
-        <button class="view-preset" type="button" data-orbit="138.0deg 70.9deg 57.86m" data-target="241.75m 4.70m -911.37m" data-fov="15.1deg">
-          <img class="preset-thumb" src="assets/view1-1.jpg" alt="Preset View 1 preview">
+        <button class="view-preset" type="button" aria-label="View 1" data-orbit="138.0deg 70.9deg 57.86m" data-target="241.75m 4.70m -911.37m" data-fov="15.1deg">
+          <span class="preset-thumb-wrap">
+            <img class="preset-thumb" src="assets/view1-1.jpg" alt="Preset View 1 preview">
+          </span>
           <span class="preset-label">View 1</span>
         </button>
-        <button class="view-preset" type="button" data-orbit="14.9deg 72.9deg 103.21m" data-target="233.94m 12.81m -937.06m" data-fov="17.5deg">
-          <img class="preset-thumb" src="assets/view2-1.jpg" alt="Preset View 2 preview">
+        <button class="view-preset" type="button" aria-label="View 2" data-orbit="14.9deg 72.9deg 103.21m" data-target="233.94m 12.81m -937.06m" data-fov="17.5deg">
+          <span class="preset-thumb-wrap">
+            <img class="preset-thumb" src="assets/view2-1.jpg" alt="Preset View 2 preview">
+          </span>
           <span class="preset-label">View 2</span>
         </button>
-        <button class="view-preset" type="button" data-orbit="0.2deg 66.7deg 53.43m" data-target="252.52m 2.77m -922.72m" data-fov="12.7deg">
-          <img class="preset-thumb" src="assets/view3-1.jpg" alt="Preset View 3 preview">
+        <button class="view-preset" type="button" aria-label="View 3" data-orbit="0.2deg 66.7deg 53.43m" data-target="252.52m 2.77m -922.72m" data-fov="12.7deg">
+          <span class="preset-thumb-wrap">
+            <img class="preset-thumb" src="assets/view3-1.jpg" alt="Preset View 3 preview">
+          </span>
           <span class="preset-label">View 3</span>
         </button>
       </div>
@@ -1065,7 +1147,7 @@
       <h2>BibTeX</h2>
       <pre>@article{yuan2026surroundnexo,
   title   = {SurroundNEXO: Ego-Centric Metric Bridging for Spatially Consistent Geometry in Autonomous Driving},
-  author  = author={Shuai Yuan and Runxi Tang and Yuzhou Ji and Fudong Ge and Hanshi Wang and Yifei Wang and Xianming Zeng and Jianyun Xu and Xingliang Liu and Yanfeng Wang and Zhipeng Zhang},
+  author  = author={Yuan, Shuai and Tang, Runxi and Ji, Yuzhou and Ge, Fudong and Wang, Hanshi and Wang, Yifei and Zeng, Xianming and Xu, Jianyun and Liu, Xingliang and Wang, Yanfeng and Zhang, Zhipeng},
   journal = {Preprint},
   year    = {2026}
 }</pre>
